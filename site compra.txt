@@ -1,0 +1,84 @@
+import { useState } from 'react';
+
+import { getTokenBalance, getBnbBalance, transferBnb, transferToken, getTransaction } from './MetaMaskService';
+
+function App() {
+
+
+const [transaction, setTransaction] = useState("");
+
+async function checkTransaction() {
+  const result = await getTransaction(transaction);
+  setMessage(`
+  Status: ${result.status}
+  Confirmations: ${result.confirmations}`);
+}
+  const [address, setAddress] = useState("<SUA CARTEIRA>");
+  const [contract, setContract] = useState("BNB");
+  const [balance, setBalance] = useState('');
+
+  const [toAddress, setToAddress] = useState("0x000000000000000000000000000000000000dead");
+  const [quantity, setQuantity] = useState("100");
+  const [message, setMessage] = useState('');
+
+  async function checkBalance() {
+    let balance;
+
+    if (contract === "BNB")
+      balance = await getBnbBalance(address);
+    else
+      balance = await getTokenBalance(address, contract);
+
+    setBalance(balance);
+    setMessage(``);
+  }
+
+  async function transfer() {
+    let result;
+    if (contract === "BNB")
+      result = await transferBnb(toAddress, quantity);
+    else
+      result = await transferToken(toAddress, contract, quantity);
+
+    setMessage(JSON.stringify(result));
+  }
+
+  return (
+
+    <div>
+
+      <p>
+       
+      </p>
+      <p>
+        <select className="form-select" onChange={evt => setContract(evt.target.value)}>
+          <option value="BNB">BNB</option>
+          <option value="0x6c4fbe6aefd6e2f541c99fc807436fc152af14bf">EI</option>
+        </select>
+        
+      </p>
+      <p>
+       air dots
+      </p>
+      <hr />
+     <p>
+
+<img src="https://i.ibb.co/QHHt8N3/Air-Pods-Pro-2.jpg" alt="Air-Pods-Pro-2" border="0"/>
+</p>
+      <p>
+        <input type="button" value="Transfer" onClick={evt => transfer()} />
+      </p>
+      <hr />
+      <p>
+        {message} 
+     
+      </p>
+<p>
+  Transaction: <input type="text" value={transaction} onChange={evt => setTransaction(evt.target.value)} />
+  <input type="button" value="Check" onClick={evt => checkTransaction()} />
+</p>
+    </div >
+  );
+}
+
+export default App;
